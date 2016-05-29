@@ -4,13 +4,33 @@
   <h1>Spark Rentals</h1>
   <p>Search for rentals</p>
   <form method="GET" action="/">
-    <label>Rental ID</label>
-    <input name="id" type="text" value="" class="form-control"/>
-    <label>City</label>
-    <select name="city">
-        
-    </select>
-    <input type="text" value="" class="form-control"/>
+    
+    <div class="row">
+      <div class="col-sm-4">
+        <label>City</label>
+        <select name="city" class="form-control">
+          <option value="">- Select a city -</option>
+          <#list cityOptions as city>
+            <option value="${city}" <#if data["city"]?? && data["city"] = city>selected</#if>>${city}</option>
+          </#list>
+        </select>
+      </div>
+      <div class="col-sm-4">
+
+        <label>Country</label>
+        <select name="country" class="form-control">
+          <option value="">- Select a country -</option>
+          <#list countryOptions as country>
+            <option value="${country}" <#if data["country"]?? && data["country"] = country>selected</#if>>${country}</option>
+          </#list>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <button type="submit" class="btn btn-primary form-control">Search</button>
+      </div>
+    </div>
   </form>
   
   <#if rentalList?size gt 0>

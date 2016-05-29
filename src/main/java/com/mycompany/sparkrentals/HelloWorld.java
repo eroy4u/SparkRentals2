@@ -26,34 +26,49 @@ import static spark.Spark.staticFileLocation;
  * @author eroy4u
  */
 public class HelloWorld {
+
     public static void main(String[] args) {
         // Configure the view directory
         Configuration viewConfig = new Configuration();
         viewConfig.setClassForTemplateLoading(HelloWorld.class, "/views");
         FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine(viewConfig);
-        
+
         // Configure the static files directory
         staticFileLocation("/public");
 
         // Configure Solr connection
         String url = "http://localhost:8983/solr/new_core";
-        SolrClient client = new HttpSolrClient( url );       
-        
-        get("/hello", (req, res) -> "Hello World");
-        
-        get("/hello2", (request, response) -> {
-           Map<String, Object> attributes = new HashMap<>();
-           attributes.put("message", "Hellow World using Template");
-           
-           QueryResponse queryResponse = client.query(new SolrQuery("*.*"));
-           
-//           SolrDocumentList docs = queryResponse.getResults();
-           List<Rental> rentalList = queryResponse.getBeans(Rental.class);
-           
-//           List resultList = new ArrayList();
-//           resultList.add("haha");
-           attributes.put("rentalList", rentalList);
-           return new ModelAndView(attributes, "index.ftl");
+        SolrClient client = new HttpSolrClient(url);
+
+        get("/", (request, response) -> {
+            
+            Map<String, Object> attributes = new HashMap<>();
+            QueryResponse queryResponse = client.query(new SolrQuery("*.*"));
+            List<Rental> rentalList = queryResponse.getBeans(Rental.class);
+            
+            String selectedCity =  request.queryMap().get("city").value();
+            
+            SearchRentalForm form = new SearchRentalForm(request.queryMap());
+            if (form.validate()){
+                Map<String, Object> cleanedData = form.getCleanedData();
+                
+            }
+            attributes.put("errorMessages", form.getErrorMessages());
+
+            
+            attributes.put("data", form.getDataToDisplay());
+            
+            attributes.put("rentalList", rentalList);
+            fillFormSelectionOption(attributes);
+            return new ModelAndView(attributes, "index.ftl");
         }, freeMarkerEngine);
+    }
+
+    private static void fillFormSelectionOption(Map<String, Object> attributes) {
+        attributes.put("countryOptions", SelectionOptions.getCountryOptions());
+        attributes.put("provinceOptions", SelectionOptions.getProvinceOptions());
+        attributes.put("cityOptions", SelectionOptions.getCityOptions());
+        attributes.put("typeOptions", SelectionOptions.getTypeOptions());
+
     }
 }
