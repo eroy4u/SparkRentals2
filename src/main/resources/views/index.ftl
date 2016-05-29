@@ -1,8 +1,10 @@
 <#include "base.ftl">
 
+
 <#macro page_body>
   <h1>Spark Rentals</h1>
   <p>Search for rentals</p>
+  <#-- search form -->
   <form method="GET" action="/">
     
     <div class="row">
@@ -16,7 +18,16 @@
         </select>
       </div>
       <div class="col-sm-4">
-
+        <label>Province</label>
+        <select name="province" class="form-control">
+          <option value="">- Select a province -</option>
+          <#list provinceOptions as province>
+            <option value="${province}" <#if data["province"]?? && data["province"] = province>selected</#if>>${province}</option>
+          </#list>
+        </select>
+      </div>
+      
+      <div class="col-sm-4">
         <label>Country</label>
         <select name="country" class="form-control">
           <option value="">- Select a country -</option>
@@ -26,13 +37,75 @@
         </select>
       </div>
     </div>
+    
+    <div class="row">
+      <div class="col-sm-4">
+        <label>Zip code</label>
+        <input name="zipCode" value="<#if data["zipCode"]??>${data["zipCode"]?html}</#if>" class="form-control"/>
+        <#--escape is needed to avoid xss -->
+      </div>
+
+
+      <div class="col-sm-4">
+        <label>type</label>
+        <select name="type" class="form-control">
+          <option value="">- Select a type -</option>
+          <#list typeOptions as type>
+            <option value="${type}" <#if data["type"]?? && data["type"] = type>selected</#if>>${type}</option>
+          </#list>
+        </select>
+      </div>
+      
+      <div class="col-sm-4">
+        <label>Has Air condition</label>
+        <select name="hasAirCondition" class="form-control">
+          <option value="">- Select -</option>
+          <#list yesNoOptions as option>
+            <option value="${option}" <#if data["hasAirCondition"]?? && data["hasAirCondition"] = option>selected</#if>>${option}</option>
+          </#list>
+        </select>
+      </div>
+      
+    </div>
+    
+    <div class="row">
+      <div class="col-sm-4">
+        <label>has Garden</label>
+        <select name="hasGarden" class="form-control">
+          <option value="">- Select -</option>
+          <#list yesNoOptions as option>
+            <option value="${option}" <#if data["hasGarden"]?? && data["hasGarden"] = option>selected</#if>>${option}</option>
+          </#list>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label>has Pool</label>
+        <select name="hasPool" class="form-control">
+          <option value="">- Select -</option>
+          <#list yesNoOptions as option>
+            <option value="${option}" <#if data["hasPool"]?? && data["hasPool"] = option>selected</#if>>${option}</option>
+          </#list>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label>is Close To Beach</label>
+        <select name="isCloseToBeach" class="form-control">
+          <option value="">- Select -</option>
+          <#list yesNoOptions as option>
+            <option value="${option}" <#if data["isCloseToBeach"]?? && data["isCloseToBeach"] = option>selected</#if>>${option}</option>
+          </#list>
+        </select>
+      </div>
+    </div>
+    
     <div class="row">
       <div class="col-sm-4">
         <button type="submit" class="btn btn-primary form-control">Search</button>
       </div>
     </div>
   </form>
-  
+   
+  <#-- search results table -->
   <#if rentalList?size gt 0>
     <table class="table">
       <tr>
@@ -69,7 +142,17 @@
       </#list>
     </table>
   <#else>
-    <p>There are no rentals matching your search criteria.</p>
+    <#if errorMessages?size gt 0>
+      <p>There are some errors in your input</p>
+      <ul>
+        <#list errorMessages as msg>
+          ${msg}
+        </#list>
+      </ul>
+      
+    <#else>
+      <p>There are no rentals matching your search criteria.</p>
+    </#if>
   </#if>
   
 </#macro>

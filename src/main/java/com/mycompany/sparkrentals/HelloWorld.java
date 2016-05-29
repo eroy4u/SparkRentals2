@@ -42,23 +42,25 @@ public class HelloWorld {
 
         get("/", (request, response) -> {
             
-            Map<String, Object> attributes = new HashMap<>();
-            QueryResponse queryResponse = client.query(new SolrQuery("*.*"));
-            List<Rental> rentalList = queryResponse.getBeans(Rental.class);
-            
-            String selectedCity =  request.queryMap().get("city").value();
-            
+            Map<String, Object> attributes = new HashMap<>();            
             SearchRentalForm form = new SearchRentalForm(request.queryMap());
             if (form.validate()){
                 Map<String, Object> cleanedData = form.getCleanedData();
+                SolrQuery query = new SolrQuery("*.*");
+//                query.addFilterQuery(args)
                 
+                QueryResponse queryResponse = client.query(query);
+                List<Rental> rentalList = queryResponse.getBeans(Rental.class);
+                attributes.put("rentalList", rentalList);
+
+            }else{
+                attributes.put("rentalList", new ArrayList<String>());
             }
             attributes.put("errorMessages", form.getErrorMessages());
 
             
             attributes.put("data", form.getDataToDisplay());
             
-            attributes.put("rentalList", rentalList);
             fillFormSelectionOption(attributes);
             return new ModelAndView(attributes, "index.ftl");
         }, freeMarkerEngine);
@@ -69,6 +71,7 @@ public class HelloWorld {
         attributes.put("provinceOptions", SelectionOptions.getProvinceOptions());
         attributes.put("cityOptions", SelectionOptions.getCityOptions());
         attributes.put("typeOptions", SelectionOptions.getTypeOptions());
+        attributes.put("yesNoOptions", SelectionOptions.getYesNoOptions());
 
     }
 }

@@ -79,7 +79,10 @@ public class SearchRentalForm {
         if (map.get("zipCode") != null){
             validateMaxLength("zipCode", map.get("zipCode").value(), 5);
         }
-
+        
+        if (errorMessages.size()>0){
+            return false;
+        }
         return true;
 
     }
