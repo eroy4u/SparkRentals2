@@ -5,7 +5,6 @@
  */
 package com.mycompany.sparkrentals;
 
-import com.datastax.driver.core.Session;
 import org.cassandraunit.DataLoader;
 import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
