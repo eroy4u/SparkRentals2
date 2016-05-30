@@ -24,6 +24,7 @@ public class CqlClient {
     public void setSession(Session session) {
         this.session = session;
     }
+
     public Session getSession() {
         return this.session;
     }
@@ -32,38 +33,37 @@ public class CqlClient {
         cluster = Cluster.builder().addContactPoint(node).build();
         session = cluster.connect();
     }
-    public void setCqlKeyspace(String cqlKeyspace){
+
+    public void setCqlKeyspace(String cqlKeyspace) {
         this.cqlKeyspace = cqlKeyspace;
     }
-    
-    
-    public void insertOrUpdateRental(Rental rental){
-        
+
+    public void insertOrUpdateRental(Rental rental) {
+
         PreparedStatement statement = session.prepare(
-            "INSERT INTO "+cqlKeyspace+".rentals " +
-            "(id, city, province, country, zipCode, type, hasAirCondition, " +
-            "hasGarden, hasPool, isCloseToBeach, dailyPrice, currency, " +
-            "roomsNumber, updated) " +
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
-        
+                "INSERT INTO " + cqlKeyspace + ".rentals "
+                + "(id, city, province, country, zipCode, type, hasAirCondition, "
+                + "hasGarden, hasPool, isCloseToBeach, dailyPrice, currency, "
+                + "roomsNumber, updated) "
+                + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+
         BoundStatement boundStatement = new BoundStatement(statement);
         boundStatement.bind(rental.getId(), rental.getCity(),
-            rental.getProvince(), rental.getCountry(), rental.getZipCode(),
-            rental.getType(), rental.isHasAirCondition(), rental.isHasGarden(),
-            rental.isHasPool(), rental.isIsCloseToBeach(), rental.getDailyPrice(),
-            rental.getCurrency(), rental.getRoomsNumber(), rental.getUpdated());
+                rental.getProvince(), rental.getCountry(), rental.getZipCode(),
+                rental.getType(), rental.isHasAirCondition(), rental.isHasGarden(),
+                rental.isHasPool(), rental.isIsCloseToBeach(), rental.getDailyPrice(),
+                rental.getCurrency(), rental.getRoomsNumber(), rental.getUpdated());
         session.execute(boundStatement);
 
     }
-    
+
     public void close() {
-        if (session != null){
+        if (session != null) {
             session.close();
         }
-        if (cluster != null){
+        if (cluster != null) {
             cluster.close();
         }
     }
-
 
 }

@@ -23,41 +23,39 @@ import org.junit.Rule;
  * @author eroy4u
  */
 public class CqlClientTest {
-    
+
     public CqlClientTest() {
     }
 
-    
     @Rule
-    public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("sample.cql","TestKeyspace"));
-        
+    public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("sample.cql", "TestKeyspace"));
+
     @Before
     public void setUp() throws Exception {
         //start a embeded test db server
         EmbeddedCassandraServerHelper.startEmbeddedCassandra("/cassandra.yaml");
     }
-    
+
     @After
     public void tearDown() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
-
 
     /**
      * Test of insertOrUpdateRental method, of class CqlClient.
      */
     @org.junit.Test
     public void testInsertRental() {
-        
+
         CqlClient client = new CqlClient();
         client.setSession(cassandraCQLUnit.session);
         client.setCqlKeyspace("TestKeyspace");
-        
+
         Rental rental = new Rental("A0293", "city0", "province1", "country1",
                 "9d8Ui", "Villa", true, true, true, true, 12.7f, "$", 3, new Date());
-        
+
         client.insertOrUpdateRental(rental);
-                
+
         ResultSet result = cassandraCQLUnit.session.execute("select * from rentals WHERE id='A0293'");
         Row row = result.iterator().next();
         assertEquals(row.getString("city"), rental.getCity());
@@ -73,8 +71,7 @@ public class CqlClientTest {
         assertEquals(row.getString("currency"), rental.getCurrency());
         assertEquals(row.getInt("roomsNumber"), rental.getRoomsNumber());
         assertEquals(row.getDate("updated"), rental.getUpdated());
-        
-        
+
     }
 
 }

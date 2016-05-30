@@ -17,7 +17,7 @@ import spark.QueryParamsMap;
  * @author eroy4u
  */
 public abstract class BaseForm {
-    
+
     protected Map<String, String> queryMap;
     protected List<String> errorMessages = new ArrayList<>();
     protected Map<String, Object> cleanedData = new HashMap<>();
@@ -29,18 +29,18 @@ public abstract class BaseForm {
     public List<String> getErrorMessages() {
         return errorMessages;
     }
-    public void clear(){
+
+    public void clear() {
         errorMessages.clear();
         cleanedData.clear();
         dataToDisplay.clear();
     }
 
     /**
-     * Validate all fields
-     * If there are errors, return false, and you can call getErrorMessages()
-     * to see the errors and call getDataToDisplay() to display the data
-     * in the submission form
-     * Otherwise, call getCleanedData to get the cleaned data
+     * Validate all fields If there are errors, return false, and you can call
+     * getErrorMessages() to see the errors and call getDataToDisplay() to
+     * display the data in the submission form Otherwise, call getCleanedData to
+     * get the cleaned data
      *
      * @return
      */
@@ -64,9 +64,9 @@ public abstract class BaseForm {
         }
         try {
             float parsedFloat = Float.parseFloat(value);
-            if (parsedFloat < 0){
+            if (parsedFloat < 0) {
                 errorMessages.add(field + " should be non-negative.");
-            }else{
+            } else {
                 cleanedData.put(field, parsedFloat);
             }
         } catch (NumberFormatException e) {
@@ -81,9 +81,9 @@ public abstract class BaseForm {
         }
         try {
             int parsedInteger = Integer.parseInt(value);
-            if (parsedInteger < 0){
+            if (parsedInteger < 0) {
                 errorMessages.add(field + " should be non-negative.");
-            }else{
+            } else {
                 cleanedData.put(field, parsedInteger);
             }
         } catch (NumberFormatException e) {
@@ -128,13 +128,13 @@ public abstract class BaseForm {
      * @param queryMap the map to set
      */
     public void setQueryMap(QueryParamsMap queryParamsMap) {
-        queryMap = new HashMap<String,String>();
-        for (Map.Entry<String, String[]> entry : queryParamsMap.toMap().entrySet()){
-            if (entry.getValue().length > 0){
+        queryMap = new HashMap<String, String>();
+        for (Map.Entry<String, String[]> entry : queryParamsMap.toMap().entrySet()) {
+            if (entry.getValue().length > 0) {
                 queryMap.put(entry.getKey(), entry.getValue()[0]);
             }
         }
 
     }
-    
+
 }

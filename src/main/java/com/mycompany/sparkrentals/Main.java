@@ -38,18 +38,18 @@ import static spark.Spark.post;
  * @author eroy4u
  */
 public class Main {
-    
+
     private static String solrUrl;
     private static String cqlHost;
     private static String cqlKeyspace;
-    
+
     /**
-     * This program can be run with arguments
-     * -solr [solr url] -cql [cassandra url] -keyspace [keyspace name]
-     * this will override the default settings
-     * @param args 
+     * This program can be run with arguments -solr [solr url] -cql [cassandra
+     * url] -keyspace [keyspace name] this will override the default settings
+     *
+     * @param args
      */
-    private static void initializeSolrCqlHostsFromArgs(String[] args){
+    private static void initializeSolrCqlHostsFromArgs(String[] args) {
         solrUrl = "http://localhost:8983/solr/new_core";
         cqlHost = "127.0.0.1";
         cqlKeyspace = "rentalskeyspace";
@@ -79,9 +79,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        
+
         initializeSolrCqlHostsFromArgs(args);
-        
+
         // Configure Solr connection
         RentalSolrClient solrClient = new RentalSolrClient();
         solrClient.connect(solrUrl);
@@ -90,7 +90,7 @@ public class Main {
         CqlClient cqlClient = new CqlClient();
         cqlClient.connect(cqlHost);
         cqlClient.setCqlKeyspace(cqlKeyspace);
-        
+
         // Configure the view directory
         Configuration viewConfig = new Configuration();
         viewConfig.setClassForTemplateLoading(Main.class, "/views");
@@ -98,17 +98,17 @@ public class Main {
 
         // Configure the static files directory
         staticFileLocation("/public");
-        
+
         //exception handling
         exception(DriverException.class, (exception, request, response) -> {
             //handle exception for cassandra serve exception
-            response.body("Something wrong for cassandra server "+exception.getMessage());
+            response.body("Something wrong for cassandra server " + exception.getMessage());
         });
         exception(Exception.class, (exception, request, response) -> {
             //handle exception
             response.body("Sorry something went wrong. Please try again later.");
         });
-        
+
         //start setting up routes here
         get("/add", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
@@ -137,14 +137,14 @@ public class Main {
 
                 //insert into cql db
                 cqlClient.insertOrUpdateRental(rental);
-                
+
                 //add index to solr at the same time
-                try{
+                try {
                     solrClient.addRental(rental);
-                }catch(IOException e){
+                } catch (IOException e) {
                     attributes.put("message", "exception connecting to solr server");
                     return new ModelAndView(attributes, "exception.ftl");
-                }catch(SolrServerException e){
+                } catch (SolrServerException e) {
                     attributes.put("message", "solr server exception");
                     return new ModelAndView(attributes, "exception.ftl");
                 }
@@ -167,29 +167,29 @@ public class Main {
             Map<String, Object> attributes = new HashMap<>();
             SearchRentalForm form = new SearchRentalForm();
             form.setQueryMap(request.queryMap());
-            
+
             int perPage = 20; //number of results per page
             if (form.validate()) {
                 Map<String, Object> cleanedData = form.getCleanedData();
-                
+
                 //get the search results from SOLR
                 try {
                     QueryResponse queryResponse = solrClient.searchRentals(cleanedData, perPage);
                     List<Rental> rentalList = queryResponse.getBeans(Rental.class);
-                    
+
                     //these are for pagination purpose
                     long resultsTotal = queryResponse.getResults().getNumFound();
                     attributes.put("resultsTotal", resultsTotal);
                     int currentPage = (int) cleanedData.getOrDefault("page", 1);
                     attributes.put("currentPage", currentPage);
-                    long maxPage = (resultsTotal % perPage > 0 ? 1: 0) + resultsTotal / perPage;
+                    long maxPage = (resultsTotal % perPage > 0 ? 1 : 0) + resultsTotal / perPage;
                     attributes.put("maxPage", maxPage);
-                    
+
                     attributes.put("rentalList", rentalList);
                     attributes.put("errorMessages", new ArrayList<>());
 
-                } catch (IOException e){
-                    attributes.put("errorMessages", Arrays.asList("Exception when connecting to Solr!"+e.getMessage()));
+                } catch (IOException e) {
+                    attributes.put("errorMessages", Arrays.asList("Exception when connecting to Solr!" + e.getMessage()));
                 } catch (SolrException e) {
                     //there is an error for querying
                     attributes.put("errorMessages", Arrays.asList("Solr query error!"));
@@ -200,7 +200,7 @@ public class Main {
                 attributes.put("rentalList", new ArrayList<>());
                 attributes.put("errorMessages", form.getErrorMessages());
             }
-            if (!attributes.containsKey("rentalList")){
+            if (!attributes.containsKey("rentalList")) {
                 attributes.put("rentalList", new ArrayList<>());
             }
             //for disply back to user entered data
@@ -210,9 +210,12 @@ public class Main {
             return new ModelAndView(attributes, "index.ftl");
         }, freeMarkerEngine);
     }
+
     /**
-     * Fill countryOptions, provinceOptions, cityOptions, typeOptions, yesNoOptions
-     * @param attributes 
+     * Fill countryOptions, provinceOptions, cityOptions, typeOptions,
+     * yesNoOptions
+     *
+     * @param attributes
      */
     private static void fillFormSelectionOption(Map<String, Object> attributes) {
         attributes.put("countryOptions", SelectionOptions.getCountryOptions());

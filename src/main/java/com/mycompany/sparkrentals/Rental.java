@@ -14,8 +14,8 @@ import org.apache.solr.client.solrj.beans.Field;
  * @author eroy4u
  */
 public class Rental {
-    
-    public Rental(){
+
+    public Rental() {
     }
 
     public Rental(String id, String city, String province, String country, String zipCode, String type, boolean hasAirCondition, boolean hasGarden, boolean hasPool, boolean isCloseToBeach, float dailyPrice, String currency, int roomsNumber, Date updated) {
@@ -34,23 +34,24 @@ public class Rental {
         this.roomsNumber = roomsNumber;
         this.updated = updated;
     }
-    
+
     /**
-     * Retrieve from a map with its key is the field  name
-     * its value is the field value
-     * @param map 
+     * Retrieve from a map with its key is the field name its value is the field
+     * value
+     *
+     * @param map
      */
-    public void SetValuesFromMap(Map<String,Object> map){
-        if (map.containsKey("id")){
+    public void SetValuesFromMap(Map<String, Object> map) {
+        if (map.containsKey("id")) {
             this.id = (String) map.get("id");
         }
-        if (map.containsKey("city")){
+        if (map.containsKey("city")) {
             this.city = (String) map.get("city");
         }
-        if (map.containsKey("province")){
+        if (map.containsKey("province")) {
             this.province = (String) map.get("province");
         }
-        if (map.containsKey("country")){
+        if (map.containsKey("country")) {
             this.country = (String) map.get("country");
         }
         if (map.containsKey("zipCode")) {
@@ -120,7 +121,7 @@ public class Rental {
 
     @Field
     private int roomsNumber;
-    
+
     @Field
     private Date updated;
 

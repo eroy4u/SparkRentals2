@@ -36,17 +36,17 @@ public class RentalSolrClientTest {
     private RentalSolrClient client;
 
     @Rule
-    public TemporaryFolder tempSolrHome= new TemporaryFolder();
-    
+    public TemporaryFolder tempSolrHome = new TemporaryFolder();
+
     @Before
     public void setUp() throws IOException, SolrServerException {
         File resourceDir = new File("src/test/resources/solr");
         //use a temporary folder for solr home
-        FileUtils.copyDirectory(resourceDir, tempSolrHome.getRoot());        
+        FileUtils.copyDirectory(resourceDir, tempSolrHome.getRoot());
         CoreContainer coreContainer = new CoreContainer(tempSolrHome.getRoot().getAbsolutePath());
         coreContainer.load();
         server = new EmbeddedSolrServer(coreContainer, "new_core");
-        
+
         //populate initial data
         List<Rental> rentals = new ArrayList<>();
         rentals.add(new Rental("A1234", "city1", "province2", "country2", "fjkso",
@@ -55,25 +55,26 @@ public class RentalSolrClientTest {
                 "studio", true, false, true, true, 11f, "$", 2, new Date()));
         rentals.add(new Rental("A3234", "city3", "province5", "country1", "e9r3e",
                 "studio", false, true, false, true, 7.2f, "$", 3, new Date()));
-        Date threeDaysAgo = new Date(new Date().getTime() - 3*24*3600*1000);
+        Date threeDaysAgo = new Date(new Date().getTime() - 3 * 24 * 3600 * 1000);
         rentals.add(new Rental("A4234", "city4", "province7", "country6", "ghree",
                 "Single Floor", true, false, true, true, 8f, "$", 2, threeDaysAgo));
-        
-        for (Rental rental: rentals){
+
+        for (Rental rental : rentals) {
             server.addBean(rental);
             server.commit();
         }
-        
+
         client = new RentalSolrClient();
         client.setSolrClient(server);
     }
+
     /**
      * Test of searchRentals method, of class RentalSolrClient.
      */
     @Test
     public void testTimePeriod() throws IOException, SolrServerException {
         Map<String, Object> data = new HashMap<>();
-        
+
         //created or updated in the last 2 days
         data.put("timePeriod", 2);
         List<Rental> rentals = client.searchRentals(data, 20).getBeans(Rental.class);
@@ -83,34 +84,35 @@ public class RentalSolrClientTest {
             assertTrue(rental.getUpdated().after(twoDaysAgo));
         }
     }
+
     /**
      * Test of searchRentals method, of class RentalSolrClient.
      */
     @Test
     public void testSearchRentalByNumericRange() throws IOException, SolrServerException {
         Map<String, Object> data = new HashMap<>();
-        
+
         //roomsNumber 2 or above
         data.put("roomsNumberFrom", 2);
         List<Rental> rentals = client.searchRentals(data, 20).getBeans(Rental.class);
         assertTrue(rentals.size() > 0);
         boolean hasThreeRooms = false;
-        for (Rental rental: rentals){
-            if (rental.getRoomsNumber() == 3){
+        for (Rental rental : rentals) {
+            if (rental.getRoomsNumber() == 3) {
                 hasThreeRooms = true;
             }
-            assertTrue(rental.getRoomsNumber()>=2);
+            assertTrue(rental.getRoomsNumber() >= 2);
         }
         assertTrue(hasThreeRooms);
-        
+
         //roomsNumber from 2 to 2
         data.put("roomsNumberTo", 2);
         rentals = client.searchRentals(data, 20).getBeans(Rental.class);
         assertTrue(rentals.size() > 0);
-        for (Rental rental: rentals){
-            assertTrue(rental.getRoomsNumber()==2);
+        for (Rental rental : rentals) {
+            assertTrue(rental.getRoomsNumber() == 2);
         }
-        
+
         //daillyPrice range
         data.clear();
         data.put("dailyPriceFrom", 5.1f);
@@ -122,24 +124,24 @@ public class RentalSolrClientTest {
             assertTrue(dailyPrice <= 7.8f && dailyPrice >= 5.1f);
         }
 
-        
     }
+
     /**
      * Test of searchRentals method, of class RentalSolrClient.
      */
     @Test
     public void testSearchRentalByExactFilter() throws IOException, SolrServerException {
-        
+
         Map<String, Object> data = new HashMap<>();
-        
+
         //test city constraint
         data.put("city", "city1");
         List<Rental> rentals = client.searchRentals(data, 20).getBeans(Rental.class);
         assertTrue(rentals.size() > 0);
-        for (Rental rental: rentals){
+        for (Rental rental : rentals) {
             assertEquals(rental.getCity(), "city1");
         }
-        
+
         //test province constraint
         data.clear();
         data.put("province", "province2");
@@ -156,7 +158,7 @@ public class RentalSolrClientTest {
         for (Rental rental : rentals) {
             assertEquals(rental.getCountry(), "country9");
         }
-        
+
         //test country constraint
         data.clear();
         data.put("zipCode", "fjkso");
@@ -165,7 +167,7 @@ public class RentalSolrClientTest {
         for (Rental rental : rentals) {
             assertEquals(rental.getZipCode(), "fjkso");
         }
-        
+
         //test type constraint
         data.clear();
         data.put("type", "Villa");
@@ -174,7 +176,7 @@ public class RentalSolrClientTest {
         for (Rental rental : rentals) {
             assertEquals(rental.getType(), "Villa");
         }
-        
+
         //test has air condition constraint
         data.clear();
         data.put("hasAirCondition", "Yes");
@@ -183,7 +185,7 @@ public class RentalSolrClientTest {
         for (Rental rental : rentals) {
             assertEquals(rental.isHasAirCondition(), true);
         }
-        
+
         //test has pool
         data.clear();
         data.put("hasPool", "Yes");
@@ -208,8 +210,9 @@ public class RentalSolrClientTest {
         for (Rental rental : rentals) {
             assertEquals(rental.isIsCloseToBeach(), true);
         }
-        
+
     }
+
     /**
      * Test of addRental method, of class RentalSolrClient.
      */
@@ -217,9 +220,9 @@ public class RentalSolrClientTest {
     public void testAddRental() throws IOException, SolrServerException {
         Rental rental = new Rental("A9999", "city90", "province90", "country90",
                 "9d8Ui", "Villa", true, true, true, true, 120.7f, "$", 3, new Date());
-        
+
         client.addRental(rental);
-        
+
         SolrQuery query = new SolrQuery("id:A9999");
         QueryResponse response = server.query(query);
         List<Rental> solrResults = response.getBeans(Rental.class);
@@ -241,6 +244,4 @@ public class RentalSolrClientTest {
         assertEquals(rental.getUpdated(), rental.getUpdated());
     }
 
-    
-    
 }

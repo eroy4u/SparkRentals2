@@ -18,10 +18,12 @@ public final class SelectionOptions {
     private SelectionOptions() {
         //private constructor
     }
+
     /**
-     * Return allowed choices for city from city0 to city98
-     * It's for demo purpose
-     * @return 
+     * Return allowed choices for city from city0 to city98 It's for demo
+     * purpose
+     *
+     * @return
      */
     public static List<String> getCityOptions() {
         List<String> cityList = new ArrayList<>();
@@ -33,7 +35,8 @@ public final class SelectionOptions {
 
     /**
      * Return allowed province choices from city0 to city98
-     * @return 
+     *
+     * @return
      */
     public static List<String> getProvinceOptions() {
         List<String> provinceList = new ArrayList<>();
@@ -45,27 +48,31 @@ public final class SelectionOptions {
 
     /**
      * Returns country choices that's allowed
-     * @return 
+     *
+     * @return
      */
     public static List<String> getCountryOptions() {
         return Arrays.asList("China", "country", "Egypt",
-                    "France", "India", "Russia", "South Africa", "Thailand",
-                    "UK");
+                "France", "India", "Russia", "South Africa", "Thailand",
+                "UK");
     }
-    
+
     /**
      * return allowed choices for rental type
-     * @return 
+     *
+     * @return
      */
-    public static List<String> getTypeOptions(){
+    public static List<String> getTypeOptions() {
         return Arrays.asList("bungalow", "Deluxe", "Single Floor",
                 "studio", "Villa");
     }
+
     /**
      * return allowed choices for Yes/No
-     * @return 
+     *
+     * @return
      */
-    public static List<String> getYesNoOptions(){
+    public static List<String> getYesNoOptions() {
         return Arrays.asList("Yes", "No");
     }
 }

@@ -20,37 +20,42 @@ import org.apache.solr.client.solrj.response.QueryResponse;
  * @author eroy4u
  */
 public class RentalSolrClient {
-    
+
     public SolrClient solrClient = null;
+
     public void connect(String solrUrl) {
         solrClient = new HttpSolrClient(solrUrl);
     }
-    public void setSolrClient(SolrClient client){
+
+    public void setSolrClient(SolrClient client) {
         this.solrClient = client;
     }
+
     /**
      * add rental object to solr index
+     *
      * @param rental
      * @throws IOException
-     * @throws SolrServerException 
+     * @throws SolrServerException
      */
-    public void addRental(Rental rental) throws IOException, SolrServerException{
+    public void addRental(Rental rental) throws IOException, SolrServerException {
         solrClient.addBean(rental);
         solrClient.commit();
     }
-    
+
     /**
      * search results based on field values in cleanedData
+     *
      * @param cleanedData
      * @param perPage
      * @return
      * @throws SolrServerException
-     * @throws IOException 
+     * @throws IOException
      */
     public QueryResponse searchRentals(Map<String, Object> cleanedData, int perPage)
-            throws SolrServerException, IOException{
+            throws SolrServerException, IOException {
         SolrQuery query = new SolrQuery("*");
-        
+
         //start adding filtering
         for (String field : Arrays.asList("city", "province", "country", "type", "zipCode")) {
             if (cleanedData.get(field) != null) {
@@ -99,15 +104,15 @@ public class RentalSolrClient {
         int currentPage = (int) cleanedData.getOrDefault("page", 1);
         query.setStart((currentPage - 1) * perPage);
         query.setRows(perPage);
-        
+
         return solrClient.query(query);
     }
-    
-    public void close(){
-        if (solrClient != null){
-            try{
+
+    public void close() {
+        if (solrClient != null) {
+            try {
                 solrClient.close();
-            }catch(IOException e){
+            } catch (IOException e) {
                 //ignore this exception for closing
             }
         }
