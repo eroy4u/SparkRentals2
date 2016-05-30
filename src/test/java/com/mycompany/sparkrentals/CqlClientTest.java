@@ -5,15 +5,17 @@
  */
 package com.mycompany.sparkrentals;
 
-import org.cassandraunit.DataLoader;
-import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
+import com.datastax.driver.core.ResultSet;
+import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import static org.hamcrest.Matchers.is;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Rule;
 
 /**
  *
@@ -32,11 +34,14 @@ public class CqlClientTest {
     public static void tearDownClass() {
     }
     
+    @Rule
+    public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("sample.cql","TestKeyspace"));
+        
     @Before
     public void setUp() throws Exception {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-        DataLoader dataLoader = new DataLoader("TestCluster", "localhost:9171");
-        dataLoader.load(new ClassPathJsonDataSet("cql_data.json"));
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra("/cassandra.yaml");
+//        DataLoader dataLoader = new DataLoader("TestCluster", "localhost:9171");
+//        dataLoader.load(new ClassPathJsonDataSet("cql_data.json"));
     }
     
     @After
@@ -49,15 +54,8 @@ public class CqlClientTest {
      */
     @org.junit.Test
     public void test_insert_ok() {
-        System.out.println("insertOrUpdateRental");
-        Rental rental = null;
-        CqlClient instance = new CqlClient();
-        instance.connect("localhost:9171", "testKeySpace");
-        instance.insertOrUpdateRental(rental);
-        
-        
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        ResultSet result = cassandraCQLUnit.session.execute("select * from student WHERE id='key1'");
+        assertThat(result.iterator().next().getString("name"), is("Shukla"));
     }
 
 }
