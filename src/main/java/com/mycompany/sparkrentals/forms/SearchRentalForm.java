@@ -31,43 +31,47 @@ public class SearchRentalForm extends BaseForm {
      */
     @Override
     public boolean validate() {
-        if (dataMap.get("city") != null) {
-            validateChoices("city", dataMap.get("city").value(),
+        if (queryMap.get("city") != null) {
+            validateChoices("city", queryMap.get("city").value(),
                     SelectionOptions.getCityOptions());
         }
-        if (dataMap.get("province") != null) {
-            validateChoices("province", dataMap.get("province").value(),
+        if (queryMap.get("province") != null) {
+            validateChoices("province", queryMap.get("province").value(),
                     SelectionOptions.getProvinceOptions());
         }
-        if (dataMap.get("type") != null) {
-            validateChoices("type", dataMap.get("type").value(),
+        if (queryMap.get("type") != null) {
+            validateChoices("type", queryMap.get("type").value(),
                     SelectionOptions.getTypeOptions());
         }
-        if (dataMap.get("country") != null) {
-            validateChoices("country", dataMap.get("country").value(),
+        if (queryMap.get("country") != null) {
+            validateChoices("country", queryMap.get("country").value(),
                     SelectionOptions.getCountryOptions());
         }
         for (String field: Arrays.asList("hasAirCondition", "hasGarden", "hasPool", "isCloseToBeach")){
-            if (dataMap.get(field) != null) {
-                validateChoices(field, dataMap.get(field).value(),
+            if (queryMap.get(field) != null) {
+                validateChoices(field, queryMap.get(field).value(),
                         SelectionOptions.getYesNoOptions());
             }
         }
         for (String field: Arrays.asList("roomsNumberFrom", "roomsNumberTo", "timePeriod")){
-            if (dataMap.get(field) != null) {
-                validateNonNegativeInt(field, dataMap.get(field).value());
+            if (queryMap.get(field) != null) {
+                validateNonNegativeInt(field, queryMap.get(field).value());
             }
         }
         for (String field: Arrays.asList("dailyPriceFrom", "dailyPriceTo")){
-            if (dataMap.get(field) != null) {
-                validateNonNegativeFloat(field, dataMap.get(field).value());
+            if (queryMap.get(field) != null) {
+                validateNonNegativeFloat(field, queryMap.get(field).value());
             }
         }
         
-        if (dataMap.get("zipCode") != null){
-            validateAlphaNumericLength("zipCode", dataMap.get("zipCode").value(), 5);
+        if (queryMap.get("zipCode") != null){
+            validateAlphaNumericLength("zipCode", queryMap.get("zipCode").value(), 5);
         }
         
+        //validate page number
+        if (queryMap.get("page") != null){
+            validateNonNegativeInt("page", queryMap.get("page").value());
+        }
         return errorMessages.size() <= 0;
 
     }

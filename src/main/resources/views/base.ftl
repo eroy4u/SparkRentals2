@@ -2,6 +2,8 @@
   <title>Spark Rentals</title>
   <link rel="stylesheet" href="/css/default.css">
   <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <script src="/js/default.js"></script>
+
 </#macro>
 
 <#macro page_body>

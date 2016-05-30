@@ -18,7 +18,7 @@ import spark.QueryParamsMap;
  */
 public abstract class BaseForm {
     
-    protected QueryParamsMap dataMap;
+    protected QueryParamsMap queryMap;
     protected List<String> errorMessages = new ArrayList<>();
     protected Map<String, Object> cleanedData = new HashMap<>();
     protected Map<String, Object> dataToDisplay = new HashMap<>();
@@ -120,10 +120,10 @@ public abstract class BaseForm {
     }
 
     /**
-     * @param dataMap the map to set
+     * @param queryMap the map to set
      */
-    public void setDataMap(QueryParamsMap dataMap) {
-        this.dataMap = dataMap;
+    public void setQueryMap(QueryParamsMap queryMap) {
+        this.queryMap = queryMap;
     }
     
 }

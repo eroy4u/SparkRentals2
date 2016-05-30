@@ -37,6 +37,22 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
  *
@@ -76,7 +92,7 @@ public class HelloWorld {
             Map<String, Object> attributes = new HashMap<>();
 
             AddRentalForm form = new AddRentalForm();
-            form.setDataMap(request.queryMap());
+            form.setQueryMap(request.queryMap());
             if (form.validate()) {
 
                 //valid rental data, so will insert into database
@@ -113,7 +129,9 @@ public class HelloWorld {
 
             Map<String, Object> attributes = new HashMap<>();
             SearchRentalForm form = new SearchRentalForm();
-            form.setDataMap(request.queryMap());
+            form.setQueryMap(request.queryMap());
+            
+            int perPage = 20;
             if (form.validate()) {
                 Map<String, Object> cleanedData = form.getCleanedData();
                 SolrQuery query = new SolrQuery("*");
@@ -158,9 +176,20 @@ public class HelloWorld {
                     String filterString = "dailyPrice:[" + dailyPriceFrom + " TO " + dailyPriceTo + "]";
                     query.addFilterQuery(filterString);
                 }
+                int currentPage = (int) cleanedData.getOrDefault("page", 1);
+                query.setStart((currentPage-1)*perPage);
+                query.setRows(perPage);
+                
                 try {
                     QueryResponse queryResponse = client.query(query);
                     List<Rental> rentalList = queryResponse.getBeans(Rental.class);
+                    
+                    long resultsTotal = queryResponse.getResults().getNumFound();
+                    attributes.put("resultsTotal", resultsTotal);
+                    attributes.put("currentPage", currentPage);
+                    long maxPage = (resultsTotal % perPage > 0 ? 1: 0) + resultsTotal / perPage;
+                    attributes.put("maxPage", maxPage);
+                    
                     attributes.put("rentalList", rentalList);
                     attributes.put("errorMessages", new ArrayList<>());
 

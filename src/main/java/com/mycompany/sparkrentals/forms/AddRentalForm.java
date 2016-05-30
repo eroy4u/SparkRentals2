@@ -31,47 +31,47 @@ public class AddRentalForm extends BaseForm {
         for (String field : Arrays.asList("id", "city", "province", "type",
                 "country", "hasAirCondition", "hasGarden", "hasPool",
                 "isCloseToBeach", "roomsNumber", "dailyPrice", "zipCode")) {
-            if (dataMap.get(field) == null || StringUtils.isEmpty(dataMap.get(field).value())) {
+            if (queryMap.get(field) == null || StringUtils.isEmpty(queryMap.get(field).value())) {
                 errorMessages.add(field + " is required.");
             }
         }
 
         //validate every field
-        if (dataMap.get("city") != null) {
-            validateChoices("city", dataMap.get("city").value(),
+        if (queryMap.get("city") != null) {
+            validateChoices("city", queryMap.get("city").value(),
                     SelectionOptions.getCityOptions());
         }
-        if (dataMap.get("province") != null) {
-            validateChoices("province", dataMap.get("province").value(),
+        if (queryMap.get("province") != null) {
+            validateChoices("province", queryMap.get("province").value(),
                     SelectionOptions.getProvinceOptions());
         }
-        if (dataMap.get("type") != null) {
-            validateChoices("type", dataMap.get("type").value(),
+        if (queryMap.get("type") != null) {
+            validateChoices("type", queryMap.get("type").value(),
                     SelectionOptions.getTypeOptions());
         }
-        if (dataMap.get("country") != null) {
-            validateChoices("country", dataMap.get("country").value(),
+        if (queryMap.get("country") != null) {
+            validateChoices("country", queryMap.get("country").value(),
                     SelectionOptions.getCountryOptions());
         }
         for (String field : Arrays.asList("hasAirCondition", "hasGarden", "hasPool", "isCloseToBeach")) {
-            if (dataMap.get(field) != null) {
-                validateChoices(field, dataMap.get(field).value(),
+            if (queryMap.get(field) != null) {
+                validateChoices(field, queryMap.get(field).value(),
                         SelectionOptions.getYesNoOptions());
             }
         }
-        if (dataMap.get("roomsNumber") != null) {
-            validateNonNegativeInt("roomsNumber", dataMap.get("roomsNumber").value());
+        if (queryMap.get("roomsNumber") != null) {
+            validateNonNegativeInt("roomsNumber", queryMap.get("roomsNumber").value());
         }
 
-        if (dataMap.get("dailyPrice") != null) {
-            validateNonNegativeFloat("dailyPrice", dataMap.get("dailyPrice").value());
+        if (queryMap.get("dailyPrice") != null) {
+            validateNonNegativeFloat("dailyPrice", queryMap.get("dailyPrice").value());
         }
 
-        if (dataMap.get("id") != null) {
-            validateAlphaNumericLength("id", dataMap.get("id").value(), 5);
+        if (queryMap.get("id") != null) {
+            validateAlphaNumericLength("id", queryMap.get("id").value(), 5);
         }
-        if (dataMap.get("zipCode") != null) {
-            validateAlphaNumericLength("zipCode", dataMap.get("zipCode").value(), 5);
+        if (queryMap.get("zipCode") != null) {
+            validateAlphaNumericLength("zipCode", queryMap.get("zipCode").value(), 5);
         }
 
         return errorMessages.size() <= 0;

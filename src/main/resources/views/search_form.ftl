@@ -1,7 +1,7 @@
-  <form method="GET" action="/">
+  <form method="GET" action="/" id="id_search_form">
     
     <#include 'rental_form_upper_rows.ftl'>
-    
+    <input id="id_page" type="hidden" name="page" value=""/>
     <div class="row">
       <div class="col-sm-4">
         <label>Number of rooms</label>
