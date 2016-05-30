@@ -5,6 +5,8 @@
  */
 package com.mycompany.sparkrentals;
 
+import com.mycompany.sparkrentals.client.CqlClient;
+import com.mycompany.sparkrentals.client.RentalSolrClient;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.mycompany.sparkrentals.forms.AddRentalForm;
 import com.mycompany.sparkrentals.forms.SearchRentalForm;
@@ -15,9 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrException;
 import spark.ModelAndView;
@@ -31,20 +30,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.solr.client.solrj.SolrServerException;
 import static spark.Spark.exception;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
 import static spark.Spark.get;
 import static spark.Spark.post;
 

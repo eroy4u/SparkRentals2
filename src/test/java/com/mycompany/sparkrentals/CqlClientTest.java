@@ -5,17 +5,15 @@
  */
 package com.mycompany.sparkrentals;
 
+import com.mycompany.sparkrentals.client.CqlClient;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import java.util.Date;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
-import static org.hamcrest.Matchers.is;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 
@@ -34,6 +32,7 @@ public class CqlClientTest {
         
     @Before
     public void setUp() throws Exception {
+        //start a embeded test db server
         EmbeddedCassandraServerHelper.startEmbeddedCassandra("/cassandra.yaml");
     }
     

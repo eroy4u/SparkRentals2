@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.sparkrentals;
+package com.mycompany.sparkrentals.client;
 
+import com.mycompany.sparkrentals.Rental;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
