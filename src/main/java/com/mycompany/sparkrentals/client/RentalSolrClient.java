@@ -25,6 +25,9 @@ public class RentalSolrClient {
     public void connect(String solrUrl) {
         solrClient = new HttpSolrClient(solrUrl);
     }
+    public void setSolrClient(SolrClient client){
+        this.solrClient = client;
+    }
     /**
      * add rental object to solr index
      * @param rental
@@ -65,12 +68,10 @@ public class RentalSolrClient {
             String roomsNumberFrom = "*";
             String roomsNumberTo = "*";
             if (cleanedData.get("roomsNumberFrom") != null) {
-                roomsNumberFrom = String.format("%.2f",
-                        (float) cleanedData.get("roomsNumberFrom"));
+                roomsNumberFrom = String.valueOf((int) cleanedData.get("roomsNumberFrom"));
             }
             if (cleanedData.get("roomsNumberTo") != null) {
-                roomsNumberTo = String.format("%.2f",
-                        (float) cleanedData.get("roomsNumberTo"));
+                roomsNumberTo = String.valueOf((int) cleanedData.get("roomsNumberTo"));
             }
             String filterString = "roomsNumber:[" + roomsNumberFrom + " TO " + roomsNumberTo + "]";
             query.addFilterQuery(filterString);
@@ -82,9 +83,9 @@ public class RentalSolrClient {
                 dailyPriceFrom = String.format("%.2f",
                         (float) cleanedData.get("dailyPriceFrom"));
             }
-            if (cleanedData.get("dailyPriceTO") != null) {
+            if (cleanedData.get("dailyPriceTo") != null) {
                 dailyPriceTo = String.format("%.2f",
-                        (float) cleanedData.get("dailyPriceTO"));
+                        (float) cleanedData.get("dailyPriceTo"));
             }
             String filterString = "dailyPrice:[" + dailyPriceFrom + " TO " + dailyPriceTo + "]";
             query.addFilterQuery(filterString);

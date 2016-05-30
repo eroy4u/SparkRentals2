@@ -17,6 +17,23 @@ public class Rental {
     
     public Rental(){
     }
+
+    public Rental(String id, String city, String province, String country, String zipCode, String type, boolean hasAirCondition, boolean hasGarden, boolean hasPool, boolean isCloseToBeach, float dailyPrice, String currency, int roomsNumber, Date updated) {
+        this.id = id;
+        this.city = city;
+        this.province = province;
+        this.country = country;
+        this.zipCode = zipCode;
+        this.type = type;
+        this.hasAirCondition = hasAirCondition;
+        this.hasGarden = hasGarden;
+        this.hasPool = hasPool;
+        this.isCloseToBeach = isCloseToBeach;
+        this.dailyPrice = dailyPrice;
+        this.currency = currency;
+        this.roomsNumber = roomsNumber;
+        this.updated = updated;
+    }
     
     /**
      * Retrieve from a map with its key is the field  name

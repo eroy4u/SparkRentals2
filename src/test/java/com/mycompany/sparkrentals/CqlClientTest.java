@@ -46,27 +46,14 @@ public class CqlClientTest {
      * Test of insertOrUpdateRental method, of class CqlClient.
      */
     @org.junit.Test
-    public void test_insert_rental() {
+    public void testInsertRental() {
         
         CqlClient client = new CqlClient();
         client.setSession(cassandraCQLUnit.session);
         client.setCqlKeyspace("TestKeyspace");
         
-        Rental rental = new Rental();
-        rental.setId("A0293");
-        rental.setCity("city0");
-        rental.setProvince("province1");
-        rental.setCountry("country1");
-        rental.setZipCode("9d8Ui");
-        rental.setType("Villa");
-        rental.setHasAirCondition(true);
-        rental.setHasGarden(true);
-        rental.setHasPool(true);
-        rental.setIsCloseToBeach(true);
-        rental.setDailyPrice(12.7f);
-        rental.setCurrency("$");
-        rental.setRoomsNumber(3);
-        rental.setUpdated(new Date());
+        Rental rental = new Rental("A0293", "city0", "province1", "country1",
+                "9d8Ui", "Villa", true, true, true, true, 12.7f, "$", 3, new Date());
         
         client.insertOrUpdateRental(rental);
                 

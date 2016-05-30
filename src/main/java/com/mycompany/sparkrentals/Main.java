@@ -172,6 +172,7 @@ public class Main {
             if (form.validate()) {
                 Map<String, Object> cleanedData = form.getCleanedData();
                 
+                //get the search results from SOLR
                 try {
                     QueryResponse queryResponse = solrClient.searchRentals(cleanedData, perPage);
                     List<Rental> rentalList = queryResponse.getBeans(Rental.class);
