@@ -1,0 +1,121 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.mycompany.sparkrentals.forms;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import spark.QueryParamsMap;
+
+/**
+ *
+ * @author eroy4u
+ */
+public abstract class BaseForm {
+    
+    protected QueryParamsMap dataMap;
+    protected List<String> errorMessages = new ArrayList<>();
+    protected Map<String, Object> cleanedData = new HashMap<>();
+    protected Map<String, Object> dataToDisplay = new HashMap<>();
+
+    public BaseForm() {
+    }
+
+    public List<String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    /**
+     * Validate all fields
+     * If there are errors, return false, and you can call getErrorMessages()
+     * to see the errors and call getDataToDisplay() to display the data
+     * in the submission form
+     * Otherwise, call getCleanedData to get the cleaned data
+     *
+     * @return
+     */
+    public abstract boolean validate();
+
+    protected void validateAlphaNumericLength(String field, String value, int maxLength) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        if (value.length() != maxLength || !StringUtils.isAlphanumeric(value)) {
+            errorMessages.add(field + " should should contains " + maxLength + " alphanumeric characters");
+        } else {
+            cleanedData.put(field, value);
+        }
+        dataToDisplay.put(field, value);
+    }
+
+    protected void validateFloat(String field, String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        try {
+            Float.parseFloat(value);
+            cleanedData.put(field, value);
+        } catch (NumberFormatException e) {
+            errorMessages.add(field + " doesn't cotain a valid number.");
+        }
+        dataToDisplay.put(field, value);
+    }
+
+    protected void validateInt(String field, String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        try {
+            Integer.parseInt(value);
+            cleanedData.put(field, value);
+        } catch (NumberFormatException e) {
+            errorMessages.add(field + " doesn't cotain a valid number.");
+        }
+        dataToDisplay.put(field, value);
+    }
+
+    protected void validateChoices(String field, String value, List<String> allowedChoices) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        boolean matched = false;
+        for (String eachAllowedChoice : allowedChoices) {
+            if (eachAllowedChoice.equals(value)) {
+                matched = true;
+            }
+        }
+        if (matched) {
+            cleanedData.put(field, value);
+        } else {
+            errorMessages.add(field + " contains invalid choice.");
+        }
+        dataToDisplay.put(field, value);
+    }
+
+    /**
+     * @return the cleanedData
+     */
+    public Map<String, Object> getCleanedData() {
+        return cleanedData;
+    }
+
+    /**
+     * @return the dataToDisplay
+     */
+    public Map<String, Object> getDataToDisplay() {
+        return dataToDisplay;
+    }
+
+    /**
+     * @param dataMap the map to set
+     */
+    public void setDataMap(QueryParamsMap dataMap) {
+        this.dataMap = dataMap;
+    }
+    
+}

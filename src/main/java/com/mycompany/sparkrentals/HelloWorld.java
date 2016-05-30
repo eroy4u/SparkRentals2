@@ -5,6 +5,7 @@
  */
 package com.mycompany.sparkrentals;
 
+import com.mycompany.sparkrentals.forms.SearchRentalForm;
 import freemarker.template.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,13 +16,14 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrException;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
-
-import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
 import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
  *
@@ -42,10 +44,28 @@ public class HelloWorld {
         String url = "http://localhost:8983/solr/new_core";
         SolrClient client = new HttpSolrClient(url);
         
+        get("/add", (request, response) -> {
+            Map<String, Object> attributes = new HashMap<>();
+            
+            attributes.put("data", new HashMap<>());
+            return new ModelAndView(attributes, "add.ftl");
+
+        }, freeMarkerEngine);
+        
+        post("/add", (request, response) -> {
+            Map<String, Object> attributes = new HashMap<>();
+
+            attributes.put("data", new HashMap<>());
+            return new ModelAndView(attributes, "add.ftl");
+
+        }, freeMarkerEngine);
+        
+        
         get("/", (request, response) -> {
             
             Map<String, Object> attributes = new HashMap<>();            
-            SearchRentalForm form = new SearchRentalForm(request.queryMap());
+            SearchRentalForm form = new SearchRentalForm();
+            form.setDataMap(request.queryMap());
             if (form.validate()) {
                 Map<String, Object> cleanedData = form.getCleanedData();
                 SolrQuery query = new SolrQuery("*");
@@ -86,15 +106,22 @@ public class HelloWorld {
                     String filterString = "dailyPrice:[" + dailyPriceFrom+" TO "+dailyPriceTo+"]";
                     query.addFilterQuery(filterString);
                 }
-                
-                QueryResponse queryResponse = client.query(query);
-                List<Rental> rentalList = queryResponse.getBeans(Rental.class);
-                attributes.put("rentalList", rentalList);
-                
+                try{
+                    QueryResponse queryResponse = client.query(query);
+                    List<Rental> rentalList = queryResponse.getBeans(Rental.class);
+                    attributes.put("rentalList", rentalList);
+                    attributes.put("errorMessages", new ArrayList<>());
+
+                }catch(SolrException e){
+                    //there is an error for querying
+                    attributes.put("rentalList", new ArrayList<>());
+                    attributes.put("errorMessages", Arrays.asList("Solr query error!"));                    
+                }
+
             } else {
-                attributes.put("rentalList", new ArrayList<String>());
+                attributes.put("rentalList", new ArrayList<>());
+                attributes.put("errorMessages", form.getErrorMessages());
             }
-            attributes.put("errorMessages", form.getErrorMessages());
             
             attributes.put("data", form.getDataToDisplay());
             
