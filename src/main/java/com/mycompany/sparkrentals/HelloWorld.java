@@ -7,6 +7,7 @@ package com.mycompany.sparkrentals;
 
 import freemarker.template.Configuration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +21,14 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
+import static spark.Spark.get;
 
 /**
  *
  * @author eroy4u
  */
 public class HelloWorld {
-
+    
     public static void main(String[] args) {
         // Configure the view directory
         Configuration viewConfig = new Configuration();
@@ -39,25 +41,60 @@ public class HelloWorld {
         // Configure Solr connection
         String url = "http://localhost:8983/solr/new_core";
         SolrClient client = new HttpSolrClient(url);
-
+        
         get("/", (request, response) -> {
             
             Map<String, Object> attributes = new HashMap<>();            
             SearchRentalForm form = new SearchRentalForm(request.queryMap());
-            if (form.validate()){
+            if (form.validate()) {
                 Map<String, Object> cleanedData = form.getCleanedData();
-                SolrQuery query = new SolrQuery("*.*");
-//                query.addFilterQuery(args)
+                SolrQuery query = new SolrQuery("*");
+                
+                for (String field: Arrays.asList("city", "province", "country", "type", "zipCode")){
+                    if (cleanedData.get(field) != null){
+                        query.addFilterQuery(field+":\""+cleanedData.get(field)+"\"");
+                    }
+                }
+                for (String field: Arrays.asList("hasAirCondition", "hasGarden", "hasPool", "isCloseToBeach")){
+                    if (cleanedData.get(field) != null){
+                        boolean isYes = cleanedData.get(field).equals("Yes");
+                        query.addFilterQuery(field+":\""+isYes+"\"");
+                    }
+                }
+                
+                if (cleanedData.get("roomsNumberFrom") != null || cleanedData.get("roomsNumberTo") != null){
+                    String roomsNumberFrom = (String) cleanedData.get("roomsNumberFrom");
+                    String roomsNumberTo = (String) cleanedData.get("roomsNumberTo");
+                    if (roomsNumberFrom == null){
+                        roomsNumberFrom = "*";
+                    }
+                    if (roomsNumberTo == null) {
+                        roomsNumberTo = "*";
+                    }
+                    String filterString = "roomsNumber:[" + roomsNumberFrom+" TO "+roomsNumberTo+"]";
+                    query.addFilterQuery(filterString);
+                }
+                if (cleanedData.get("dailyPriceFrom") != null || cleanedData.get("dailyPriceTo") != null){
+                    String dailyPriceFrom = (String) cleanedData.get("dailyPriceFrom");
+                    String dailyPriceTo = (String) cleanedData.get("dailyPriceTo");
+                    if (dailyPriceFrom == null){
+                        dailyPriceFrom = "*";
+                    }
+                    if (dailyPriceTo == null) {
+                        dailyPriceTo = "*";
+                    }
+                    String filterString = "dailyPrice:[" + dailyPriceFrom+" TO "+dailyPriceTo+"]";
+                    query.addFilterQuery(filterString);
+                }
                 
                 QueryResponse queryResponse = client.query(query);
                 List<Rental> rentalList = queryResponse.getBeans(Rental.class);
                 attributes.put("rentalList", rentalList);
-
-            }else{
+                
+            } else {
                 attributes.put("rentalList", new ArrayList<String>());
             }
             attributes.put("errorMessages", form.getErrorMessages());
-
             
             attributes.put("data", form.getDataToDisplay());
             
@@ -65,13 +102,13 @@ public class HelloWorld {
             return new ModelAndView(attributes, "index.ftl");
         }, freeMarkerEngine);
     }
-
+    
     private static void fillFormSelectionOption(Map<String, Object> attributes) {
         attributes.put("countryOptions", SelectionOptions.getCountryOptions());
         attributes.put("provinceOptions", SelectionOptions.getProvinceOptions());
         attributes.put("cityOptions", SelectionOptions.getCityOptions());
         attributes.put("typeOptions", SelectionOptions.getTypeOptions());
         attributes.put("yesNoOptions", SelectionOptions.getYesNoOptions());
-
+        
     }
 }

@@ -3,7 +3,7 @@
 
 <#macro page_body>
   <h1>Spark Rentals</h1>
-  <p>Search for rentals</p>
+  <p><a href="/">Search for rentals</a></p>
   <#-- search form -->
   <form method="GET" action="/">
     
@@ -41,7 +41,7 @@
     <div class="row">
       <div class="col-sm-4">
         <label>Zip code</label>
-        <input name="zipCode" value="<#if data["zipCode"]??>${data["zipCode"]?html}</#if>" class="form-control"/>
+        <input type="text" name="zipCode" value="<#if data["zipCode"]??>${data["zipCode"]?html}</#if>" class="form-control"/>
         <#--escape is needed to avoid xss -->
       </div>
 
@@ -95,6 +95,25 @@
             <option value="${option}" <#if data["isCloseToBeach"]?? && data["isCloseToBeach"] = option>selected</#if>>${option}</option>
           </#list>
         </select>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-sm-4">
+        <label>Number of rooms</label>
+        <p>From
+          <input name="roomsNumberFrom" type="number" value="<#if data["roomsNumberFrom"]??>${data["roomsNumberFrom"]?html}</#if>" class="form-control short-input"/>
+          to
+          <input name="roomsNumberTo" type="number" value="<#if data["roomsNumberTo"]??>${data["roomsNumberTo"]?html}</#if>" class="form-control short-input"/>
+        </p>
+      </div>
+      <div class="col-sm-4">
+        <label>Daily Price</label>
+        <p>From
+          <input name="dailyPriceFrom" type="number" step="0.01" value="<#if data["dailyPriceFrom"]??>${data["dailyPriceFrom"]?html}</#if>" class="form-control short-input"/>
+          to
+          <input name="dailyPriceTo" type="number" step="0.01" value="<#if data["dailyPriceTo"]??>${data["dailyPriceTo"]?html}</#if>" class="form-control short-input"/>
+        </p>
       </div>
     </div>
     

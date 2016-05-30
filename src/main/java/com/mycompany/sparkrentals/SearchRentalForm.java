@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import spark.QueryParamsMap;
 
 /**
@@ -77,7 +78,7 @@ public class SearchRentalForm {
         }
         
         if (map.get("zipCode") != null){
-            validateMaxLength("zipCode", map.get("zipCode").value(), 5);
+            validateAlphaNumericLength("zipCode", map.get("zipCode").value(), 5);
         }
         
         if (errorMessages.size()>0){
@@ -86,12 +87,12 @@ public class SearchRentalForm {
         return true;
 
     }
-    private void validateMaxLength(String field, String value, int maxLength){
+    private void validateAlphaNumericLength(String field, String value, int maxLength){
         if (value == null || value.isEmpty()){
             return;
         }
-        if (value.length() > maxLength){
-            errorMessages.add(field + " should not contains more than "+maxLength+" characters");
+        if (value.length() != maxLength || !StringUtils.isAlphanumeric(value)){
+            errorMessages.add(field + " should should contains "+maxLength+" alphanumeric characters");
         }else{
             cleanedData.put(field, value);
         }
@@ -102,8 +103,8 @@ public class SearchRentalForm {
             return;
         }
         try{
-            float parsedValue = Float.parseFloat(value);
-            cleanedData.put(field, parsedValue);
+            Float.parseFloat(value);
+            cleanedData.put(field, value);
         }catch(NumberFormatException e){
             errorMessages.add(field + " doesn't cotain a valid number.");
         }
@@ -115,8 +116,8 @@ public class SearchRentalForm {
             return;
         }
         try{
-            int parsedValue = Integer.parseInt(value);
-            cleanedData.put(field, parsedValue);
+            Integer.parseInt(value);
+            cleanedData.put(field, value);
         }catch(NumberFormatException e){
             errorMessages.add(field + " doesn't cotain a valid number.");
         }
