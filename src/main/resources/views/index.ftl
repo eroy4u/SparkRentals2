@@ -50,13 +50,13 @@
     
     <div class="pagination">
       <#if currentPage gt 1>
-        <a href="javascript:swapPage(${currentPage-1})">Previous Page</a>
+        <a href="javascript:goToPage(${currentPage-1})">Previous Page</a>
       </#if>  
 
       <span>Page ${currentPage}/${maxPage} of ${resultsTotal} results.</span>
       
       <#if currentPage lt maxPage>
-        <a href="javascript:swapPage(${currentPage+1})">Next Page</a>
+        <a href="javascript:goToPage(${currentPage+1})">Next Page</a>
       </#if>
     </div>
   <#else>
