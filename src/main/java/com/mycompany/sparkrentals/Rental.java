@@ -6,6 +6,7 @@
 package com.mycompany.sparkrentals;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -103,6 +104,9 @@ public class Rental {
 
     @Field
     private int roomsNumber;
+    
+    @Field
+    private Date updated;
 
     /**
      * @return the id
@@ -284,6 +288,20 @@ public class Rental {
      */
     public void setRoomsNumber(int roomsNumber) {
         this.roomsNumber = roomsNumber;
+    }
+
+    /**
+     * @return the updated
+     */
+    public Date getUpdated() {
+        return updated;
+    }
+
+    /**
+     * @param updated the updated to set
+     */
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
 }

@@ -53,6 +53,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.get;
 import static spark.Spark.post;
+import java.util.Date;
 
 /**
  *
@@ -102,6 +103,7 @@ public class HelloWorld {
                 //Assuming for now there's only one currency $
                 //so we don't need to ask the user to select, we preset it here
                 rental.setCurrency("$");
+                rental.setUpdated(new Date());
                 try{
                     cqlClient.insertOrUpdateRental(rental);
                 }catch (Exception e){
@@ -176,6 +178,11 @@ public class HelloWorld {
                     String filterString = "dailyPrice:[" + dailyPriceFrom + " TO " + dailyPriceTo + "]";
                     query.addFilterQuery(filterString);
                 }
+                if (cleanedData.get("timePeriod") != null){
+                    int timePeriod = (int)cleanedData.get("timePeriod");
+                    query.addFilterQuery("updated:[NOW-"+timePeriod+"DAY TO * ]");
+                }
+                
                 int currentPage = (int) cleanedData.getOrDefault("page", 1);
                 query.setStart((currentPage-1)*perPage);
                 query.setRows(perPage);

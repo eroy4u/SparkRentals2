@@ -36,14 +36,14 @@ public class CassandraClient {
             "(id, city, province, country, zipCode, type, hasAirCondition, " +
             "hasGarden, hasPool, isCloseToBeach, dailyPrice, currency, " +
             "roomsNumber, updated) " +
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,toTimestamp(now()));");
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
         
         BoundStatement boundStatement = new BoundStatement(statement);
         boundStatement.bind(rental.getId(), rental.getCity(),
             rental.getProvince(), rental.getCountry(), rental.getZipCode(),
             rental.getType(), rental.isHasAirCondition(), rental.isHasGarden(),
             rental.isHasPool(), rental.isIsCloseToBeach(), rental.getDailyPrice(),
-            rental.getCurrency(), rental.getRoomsNumber());
+            rental.getCurrency(), rental.getRoomsNumber(), rental.getUpdated());
         session.execute(boundStatement);
 
     }
