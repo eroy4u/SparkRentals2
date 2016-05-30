@@ -62,7 +62,7 @@ public abstract class BaseForm {
             if (parsedFloat < 0){
                 errorMessages.add(field + " should be non-negative.");
             }else{
-                cleanedData.put(field, value);
+                cleanedData.put(field, parsedFloat);
             }
         } catch (NumberFormatException e) {
             errorMessages.add(field + " doesn't cotain a valid number.");
@@ -79,7 +79,7 @@ public abstract class BaseForm {
             if (parsedInteger < 0){
                 errorMessages.add(field + " should be non-negative.");
             }else{
-                cleanedData.put(field, value);
+                cleanedData.put(field, parsedInteger);
             }
         } catch (NumberFormatException e) {
             errorMessages.add(field + " doesn't cotain a valid number.");

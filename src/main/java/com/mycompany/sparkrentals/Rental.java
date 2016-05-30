@@ -5,6 +5,8 @@
  */
 package com.mycompany.sparkrentals;
 
+import java.util.Arrays;
+import java.util.Map;
 import org.apache.solr.client.solrj.beans.Field;
 
 /**
@@ -12,6 +14,56 @@ import org.apache.solr.client.solrj.beans.Field;
  * @author eroy4u
  */
 public class Rental {
+    
+    public Rental(){
+    }
+    
+    /**
+     * Retrieve from a map with its key is the field  name
+     * its value is the field value
+     * @param map 
+     */
+    public void SetValuesFromMap(Map<String,Object> map){
+        if (map.containsKey("id")){
+            this.id = (String) map.get("id");
+        }
+        if (map.containsKey("city")){
+            this.city = (String) map.get("city");
+        }
+        if (map.containsKey("province")){
+            this.province = (String) map.get("province");
+        }
+        if (map.containsKey("country")){
+            this.country = (String) map.get("country");
+        }
+        if (map.containsKey("zipCode")) {
+            this.zipCode = (String) map.get("zipCode");
+        }
+        if (map.containsKey("type")) {
+            this.type = (String) map.get("type");
+        }
+        if (map.containsKey("hasAirCondition")) {
+            this.hasAirCondition = "Yes".equals((String) map.get("hasAirCondition"));
+        }
+        if (map.containsKey("hasGarden")) {
+            this.hasGarden = "Yes".equals((String) map.get("hasGarden"));
+        }
+        if (map.containsKey("hasPool")) {
+            this.hasPool = "Yes".equals((String) map.get("hasPool"));
+        }
+        if (map.containsKey("isCloseToBeach")) {
+            this.isCloseToBeach = "Yes".equals((String) map.get("isCloseToBeach"));
+        }
+        if (map.containsKey("dailyPrice")) {
+            this.dailyPrice = (float) map.get("dailyPrice");
+        }
+        if (map.containsKey("currency")) {
+            this.currency = (String) map.get("currency");
+        }
+        if (map.containsKey("roomsNumber")) {
+            this.roomsNumber = (int) map.get("roomsNumber");
+        }
+    }
 
     @Field
     private String id;
