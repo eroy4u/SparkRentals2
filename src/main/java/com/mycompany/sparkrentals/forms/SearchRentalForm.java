@@ -32,45 +32,45 @@ public class SearchRentalForm extends BaseForm {
     @Override
     public boolean validate() {
         if (queryMap.get("city") != null) {
-            validateChoices("city", queryMap.get("city").value(),
+            validateChoices("city", queryMap.get("city"),
                     SelectionOptions.getCityOptions());
         }
         if (queryMap.get("province") != null) {
-            validateChoices("province", queryMap.get("province").value(),
+            validateChoices("province", queryMap.get("province"),
                     SelectionOptions.getProvinceOptions());
         }
         if (queryMap.get("type") != null) {
-            validateChoices("type", queryMap.get("type").value(),
+            validateChoices("type", queryMap.get("type"),
                     SelectionOptions.getTypeOptions());
         }
         if (queryMap.get("country") != null) {
-            validateChoices("country", queryMap.get("country").value(),
+            validateChoices("country", queryMap.get("country"),
                     SelectionOptions.getCountryOptions());
         }
         for (String field: Arrays.asList("hasAirCondition", "hasGarden", "hasPool", "isCloseToBeach")){
             if (queryMap.get(field) != null) {
-                validateChoices(field, queryMap.get(field).value(),
+                validateChoices(field, queryMap.get(field),
                         SelectionOptions.getYesNoOptions());
             }
         }
         for (String field: Arrays.asList("roomsNumberFrom", "roomsNumberTo", "timePeriod")){
             if (queryMap.get(field) != null) {
-                validateNonNegativeInt(field, queryMap.get(field).value());
+                validateNonNegativeInt(field, queryMap.get(field));
             }
         }
         for (String field: Arrays.asList("dailyPriceFrom", "dailyPriceTo")){
             if (queryMap.get(field) != null) {
-                validateNonNegativeFloat(field, queryMap.get(field).value());
+                validateNonNegativeFloat(field, queryMap.get(field));
             }
         }
         
         if (queryMap.get("zipCode") != null){
-            validateAlphaNumericLength("zipCode", queryMap.get("zipCode").value(), 5);
+            validateAlphaNumericLength("zipCode", queryMap.get("zipCode"), 5);
         }
         
         //validate page number
         if (queryMap.get("page") != null){
-            validateNonNegativeInt("page", queryMap.get("page").value());
+            validateNonNegativeInt("page", queryMap.get("page"));
         }
         return errorMessages.size() <= 0;
 

@@ -18,7 +18,7 @@ import spark.QueryParamsMap;
  */
 public abstract class BaseForm {
     
-    protected QueryParamsMap queryMap;
+    protected Map<String, String> queryMap;
     protected List<String> errorMessages = new ArrayList<>();
     protected Map<String, Object> cleanedData = new HashMap<>();
     protected Map<String, Object> dataToDisplay = new HashMap<>();
@@ -28,6 +28,11 @@ public abstract class BaseForm {
 
     public List<String> getErrorMessages() {
         return errorMessages;
+    }
+    public void clear(){
+        errorMessages.clear();
+        cleanedData.clear();
+        dataToDisplay.clear();
     }
 
     /**
@@ -41,7 +46,7 @@ public abstract class BaseForm {
      */
     public abstract boolean validate();
 
-    protected void validateAlphaNumericLength(String field, String value, int maxLength) {
+    public void validateAlphaNumericLength(String field, String value, int maxLength) {
         if (value == null || value.isEmpty()) {
             return;
         }
@@ -53,7 +58,7 @@ public abstract class BaseForm {
         dataToDisplay.put(field, value);
     }
 
-    protected void validateNonNegativeFloat(String field, String value) {
+    public void validateNonNegativeFloat(String field, String value) {
         if (value == null || value.isEmpty()) {
             return;
         }
@@ -70,7 +75,7 @@ public abstract class BaseForm {
         dataToDisplay.put(field, value);
     }
 
-    protected void validateNonNegativeInt(String field, String value) {
+    public void validateNonNegativeInt(String field, String value) {
         if (value == null || value.isEmpty()) {
             return;
         }
@@ -87,7 +92,7 @@ public abstract class BaseForm {
         dataToDisplay.put(field, value);
     }
 
-    protected void validateChoices(String field, String value, List<String> allowedChoices) {
+    public void validateChoices(String field, String value, List<String> allowedChoices) {
         if (value == null || value.isEmpty()) {
             return;
         }
@@ -122,8 +127,14 @@ public abstract class BaseForm {
     /**
      * @param queryMap the map to set
      */
-    public void setQueryMap(QueryParamsMap queryMap) {
-        this.queryMap = queryMap;
+    public void setQueryMap(QueryParamsMap queryParamsMap) {
+        queryMap = new HashMap<String,String>();
+        for (Map.Entry<String, String[]> entry : queryParamsMap.toMap().entrySet()){
+            if (entry.getValue().length > 0){
+                queryMap.put(entry.getKey(), entry.getValue()[0]);
+            }
+        }
+
     }
     
 }

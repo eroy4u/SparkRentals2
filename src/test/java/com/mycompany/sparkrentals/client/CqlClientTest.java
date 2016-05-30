@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.sparkrentals;
+package com.mycompany.sparkrentals.client;
 
 import com.mycompany.sparkrentals.client.CqlClient;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.mycompany.sparkrentals.Rental;
 import java.util.Date;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;

@@ -31,47 +31,47 @@ public class AddRentalForm extends BaseForm {
         for (String field : Arrays.asList("id", "city", "province", "type",
                 "country", "hasAirCondition", "hasGarden", "hasPool",
                 "isCloseToBeach", "roomsNumber", "dailyPrice", "zipCode")) {
-            if (queryMap.get(field) == null || StringUtils.isEmpty(queryMap.get(field).value())) {
+            if (queryMap.get(field) == null || StringUtils.isEmpty(queryMap.get(field))) {
                 errorMessages.add(field + " is required.");
             }
         }
 
         //validate every field
         if (queryMap.get("city") != null) {
-            validateChoices("city", queryMap.get("city").value(),
+            validateChoices("city", queryMap.get("city"),
                     SelectionOptions.getCityOptions());
         }
         if (queryMap.get("province") != null) {
-            validateChoices("province", queryMap.get("province").value(),
+            validateChoices("province", queryMap.get("province"),
                     SelectionOptions.getProvinceOptions());
         }
         if (queryMap.get("type") != null) {
-            validateChoices("type", queryMap.get("type").value(),
+            validateChoices("type", queryMap.get("type"),
                     SelectionOptions.getTypeOptions());
         }
         if (queryMap.get("country") != null) {
-            validateChoices("country", queryMap.get("country").value(),
+            validateChoices("country", queryMap.get("country"),
                     SelectionOptions.getCountryOptions());
         }
         for (String field : Arrays.asList("hasAirCondition", "hasGarden", "hasPool", "isCloseToBeach")) {
             if (queryMap.get(field) != null) {
-                validateChoices(field, queryMap.get(field).value(),
+                validateChoices(field, queryMap.get(field),
                         SelectionOptions.getYesNoOptions());
             }
         }
         if (queryMap.get("roomsNumber") != null) {
-            validateNonNegativeInt("roomsNumber", queryMap.get("roomsNumber").value());
+            validateNonNegativeInt("roomsNumber", queryMap.get("roomsNumber"));
         }
 
         if (queryMap.get("dailyPrice") != null) {
-            validateNonNegativeFloat("dailyPrice", queryMap.get("dailyPrice").value());
+            validateNonNegativeFloat("dailyPrice", queryMap.get("dailyPrice"));
         }
 
         if (queryMap.get("id") != null) {
-            validateAlphaNumericLength("id", queryMap.get("id").value(), 5);
+            validateAlphaNumericLength("id", queryMap.get("id"), 5);
         }
         if (queryMap.get("zipCode") != null) {
-            validateAlphaNumericLength("zipCode", queryMap.get("zipCode").value(), 5);
+            validateAlphaNumericLength("zipCode", queryMap.get("zipCode"), 5);
         }
 
         return errorMessages.size() <= 0;
