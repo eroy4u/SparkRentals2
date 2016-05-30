@@ -14,25 +14,27 @@ import com.datastax.driver.core.Session;
  *
  * @author eroy4u
  */
-public class CassandraClient {
+public class CqlClient {
 
     private Cluster cluster = null;
     private Session session = null;
+    private String cqlKeyspace;
 
     public Session getSession() {
         return this.session;
     }
 
-    public void connect(String node) {
+    public void connect(String node, String cqlKeyspace) {
         cluster = Cluster.builder().addContactPoint(node).build();
         session = cluster.connect();
+        this.cqlKeyspace = cqlKeyspace;
     }
     
     
     public void insertOrUpdateRental(Rental rental){
         
         PreparedStatement statement = session.prepare(
-            "INSERT INTO rentalskeyspace.rentals " +
+            "INSERT INTO "+cqlKeyspace+".rentals " +
             "(id, city, province, country, zipCode, type, hasAirCondition, " +
             "hasGarden, hasPool, isCloseToBeach, dailyPrice, currency, " +
             "roomsNumber, updated) " +

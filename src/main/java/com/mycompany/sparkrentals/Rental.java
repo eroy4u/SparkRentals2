@@ -5,7 +5,6 @@
  */
 package com.mycompany.sparkrentals;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import org.apache.solr.client.solrj.beans.Field;

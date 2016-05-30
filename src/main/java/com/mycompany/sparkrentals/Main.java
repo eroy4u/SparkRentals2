@@ -5,9 +5,11 @@
  */
 package com.mycompany.sparkrentals;
 
+import com.datastax.driver.core.exceptions.DriverException;
 import com.mycompany.sparkrentals.forms.AddRentalForm;
 import com.mycompany.sparkrentals.forms.SearchRentalForm;
 import freemarker.template.Configuration;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,64 +23,107 @@ import org.apache.solr.common.SolrException;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 import static spark.Spark.staticFileLocation;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.get;
-import static spark.Spark.post;
 import java.util.Date;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.solr.client.solrj.SolrServerException;
+import static spark.Spark.exception;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
  *
  * @author eroy4u
  */
-public class HelloWorld {
+public class Main {
+    
+    private static String solrUrl;
+    private static String cqlHost;
+    private static String cqlKeyspace;
+    
+    /**
+     * This program can be run with arguments
+     * -solr [solr url] -cql [cassandra url] -keyspace [keyspace name]
+     * this will override the default settings
+     * @param args 
+     */
+    private static void initializeSolrCqlHostsFromArgs(String[] args){
+        solrUrl = "http://localhost:8983/solr/new_core";
+        cqlHost = "127.0.0.1";
+        cqlKeyspace = "rentalskeyspace";
+
+        Options options = new Options();
+        options.addOption("solr", true, "Solr host url");
+        options.addOption("cql", true, "cassandra host address");
+        options.addOption("keyspace", true, "cassandra keyspace name");
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd;
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.out.println("run with arguments -solr [solr url] -cql [cassandra url] -keyspace [keyspace name]");
+            return;
+        }
+        if (cmd.hasOption("solr")) {
+            solrUrl = cmd.getOptionValue("solr");
+            System.out.println("SolrUrl = " + solrUrl);
+        }
+        if (cmd.hasOption("cql")) {
+            cqlHost = cmd.getOptionValue("cql");
+        }
+        if (cmd.hasOption("keyspace")) {
+            cqlKeyspace = cmd.getOptionValue("keyspace");
+        }
+    }
 
     public static void main(String[] args) {
+        
+        initializeSolrCqlHostsFromArgs(args);
+        
+        // Configure Solr connection
+        RentalSolrClient solrClient = new RentalSolrClient();
+        solrClient.connect(solrUrl);
+
+        // Configure Cassandra connection
+        CqlClient cqlClient = new CqlClient();
+        cqlClient.connect(cqlHost, cqlKeyspace);
+        
         // Configure the view directory
         Configuration viewConfig = new Configuration();
-        viewConfig.setClassForTemplateLoading(HelloWorld.class, "/views");
+        viewConfig.setClassForTemplateLoading(Main.class, "/views");
         FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine(viewConfig);
 
         // Configure the static files directory
         staticFileLocation("/public");
-
-        // Configure Solr connection
-        String url = "http://localhost:8983/solr/new_core";
-        SolrClient client = new HttpSolrClient(url);
-
-        // Configure Cassandra connection
-        String cqlHost = "127.0.0.1";
-        CassandraClient cqlClient = new CassandraClient();
-        cqlClient.connect(cqlHost);
-
+        
+        //exception handling
+        exception(DriverException.class, (exception, request, response) -> {
+            //handle exception for cassandra serve exception
+            response.body("Something wrong for cassandra server "+exception.getMessage());
+        });
+        exception(Exception.class, (exception, request, response) -> {
+            //handle exception
+            response.body("Sorry something went wrong. Please try again later.");
+        });
+        
+        //start setting up routes here
         get("/add", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
 
@@ -86,7 +131,6 @@ public class HelloWorld {
             fillFormSelectionOption(attributes);
 
             return new ModelAndView(attributes, "add.ftl");
-
         }, freeMarkerEngine);
 
         post("/add", (request, response) -> {
@@ -96,7 +140,7 @@ public class HelloWorld {
             form.setQueryMap(request.queryMap());
             if (form.validate()) {
 
-                //valid rental data, so will insert into database
+                //valid rental data, so will insert into database and solr
                 // or it'll update if one recrod already exists with the same key
                 Rental rental = new Rental();
                 rental.SetValuesFromMap(form.getCleanedData());
@@ -104,21 +148,25 @@ public class HelloWorld {
                 //so we don't need to ask the user to select, we preset it here
                 rental.setCurrency("$");
                 rental.setUpdated(new Date());
+
+                //insert into cql db
+                cqlClient.insertOrUpdateRental(rental);
+                
+                //add index to solr at the same time
                 try{
-                    cqlClient.insertOrUpdateRental(rental);
-                }catch (Exception e){
-                    throw e;
+                    solrClient.addRental(rental);
+                }catch(IOException e){
+                    attributes.put("message", "exception connecting to solr server");
+                    return new ModelAndView(attributes, "exception.ftl");
+                }catch(SolrServerException e){
+                    attributes.put("message", "solr server exception");
+                    return new ModelAndView(attributes, "exception.ftl");
                 }
-                
-                client.addBean(rental);
-                client.commit();
-                
 
                 return new ModelAndView(attributes, "add_done.ftl");
 
             }
             // form contains errors
-
             attributes.put("errorMessages", form.getErrorMessages());
             attributes.put("data", form.getDataToDisplay());
             fillFormSelectionOption(attributes);
@@ -127,72 +175,25 @@ public class HelloWorld {
 
         }, freeMarkerEngine);
 
+        //index is the search page
         get("/", (request, response) -> {
 
             Map<String, Object> attributes = new HashMap<>();
             SearchRentalForm form = new SearchRentalForm();
             form.setQueryMap(request.queryMap());
             
-            int perPage = 20;
+            int perPage = 20; //number of results per page
             if (form.validate()) {
                 Map<String, Object> cleanedData = form.getCleanedData();
-                SolrQuery query = new SolrQuery("*");
-
-                for (String field : Arrays.asList("city", "province", "country", "type", "zipCode")) {
-                    if (cleanedData.get(field) != null) {
-                        query.addFilterQuery(field + ":\"" + cleanedData.get(field) + "\"");
-                    }
-                }
-                for (String field : Arrays.asList("hasAirCondition", "hasGarden", "hasPool", "isCloseToBeach")) {
-                    if (cleanedData.get(field) != null) {
-                        boolean isYes = cleanedData.get(field).equals("Yes");
-                        query.addFilterQuery(field + ":\"" + isYes + "\"");
-                    }
-                }
-
-                if (cleanedData.get("roomsNumberFrom") != null || cleanedData.get("roomsNumberTo") != null) {
-                    String roomsNumberFrom = "*";
-                    String roomsNumberTo = "*";
-                    if (cleanedData.get("roomsNumberFrom") != null) {
-                        roomsNumberFrom = String.format("%.2f",
-                                (float) cleanedData.get("roomsNumberFrom"));
-                    }
-                    if (cleanedData.get("roomsNumberTo") != null) {
-                        roomsNumberTo = String.format("%.2f",
-                                (float) cleanedData.get("roomsNumberTo"));
-                    }
-                    String filterString = "roomsNumber:[" + roomsNumberFrom + " TO " + roomsNumberTo + "]";
-                    query.addFilterQuery(filterString);
-                }
-                if (cleanedData.get("dailyPriceFrom") != null || cleanedData.get("dailyPriceTo") != null) {
-                    String dailyPriceFrom = "*";
-                    String dailyPriceTo = "*";
-                    if (cleanedData.get("dailyPriceFrom") != null) {
-                        dailyPriceFrom = String.format("%.2f",
-                                (float) cleanedData.get("dailyPriceFrom"));
-                    }
-                    if (cleanedData.get("dailyPriceTO") != null) {
-                        dailyPriceTo = String.format("%.2f",
-                                (float) cleanedData.get("dailyPriceTO"));
-                    }
-                    String filterString = "dailyPrice:[" + dailyPriceFrom + " TO " + dailyPriceTo + "]";
-                    query.addFilterQuery(filterString);
-                }
-                if (cleanedData.get("timePeriod") != null){
-                    int timePeriod = (int)cleanedData.get("timePeriod");
-                    query.addFilterQuery("updated:[NOW-"+timePeriod+"DAY TO * ]");
-                }
-                
-                int currentPage = (int) cleanedData.getOrDefault("page", 1);
-                query.setStart((currentPage-1)*perPage);
-                query.setRows(perPage);
                 
                 try {
-                    QueryResponse queryResponse = client.query(query);
+                    QueryResponse queryResponse = solrClient.searchRentals(cleanedData, perPage);
                     List<Rental> rentalList = queryResponse.getBeans(Rental.class);
                     
+                    //these are for pagination purpose
                     long resultsTotal = queryResponse.getResults().getNumFound();
                     attributes.put("resultsTotal", resultsTotal);
+                    int currentPage = (int) cleanedData.getOrDefault("page", 1);
                     attributes.put("currentPage", currentPage);
                     long maxPage = (resultsTotal % perPage > 0 ? 1: 0) + resultsTotal / perPage;
                     attributes.put("maxPage", maxPage);
@@ -202,22 +203,30 @@ public class HelloWorld {
 
                 } catch (SolrException e) {
                     //there is an error for querying
-                    attributes.put("rentalList", new ArrayList<>());
                     attributes.put("errorMessages", Arrays.asList("Solr query error!"));
+                } catch (Exception e){
+                    attributes.put("errorMessages", Arrays.asList("Exception when connecting to Solr!"+e.getMessage()));
                 }
 
             } else {
+                //search form not valid
                 attributes.put("rentalList", new ArrayList<>());
                 attributes.put("errorMessages", form.getErrorMessages());
             }
-
+            if (!attributes.containsKey("rentalList")){
+                attributes.put("rentalList", new ArrayList<>());
+            }
+            //for disply back to user entered data
             attributes.put("data", form.getDataToDisplay());
 
             fillFormSelectionOption(attributes);
             return new ModelAndView(attributes, "index.ftl");
         }, freeMarkerEngine);
     }
-
+    /**
+     * Fill countryOptions, provinceOptions, cityOptions, typeOptions, yesNoOptions
+     * @param attributes 
+     */
     private static void fillFormSelectionOption(Map<String, Object> attributes) {
         attributes.put("countryOptions", SelectionOptions.getCountryOptions());
         attributes.put("provinceOptions", SelectionOptions.getProvinceOptions());
