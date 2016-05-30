@@ -20,13 +20,18 @@ public class CqlClient {
     private Session session = null;
     private String cqlKeyspace;
 
+    public void setSession(Session session) {
+        this.session = session;
+    }
     public Session getSession() {
         return this.session;
     }
 
-    public void connect(String node, String cqlKeyspace) {
+    public void connect(String node) {
         cluster = Cluster.builder().addContactPoint(node).build();
         session = cluster.connect();
+    }
+    public void setCqlKeyspace(String cqlKeyspace){
         this.cqlKeyspace = cqlKeyspace;
     }
     
@@ -58,4 +63,6 @@ public class CqlClient {
             cluster.close();
         }
     }
+
+
 }

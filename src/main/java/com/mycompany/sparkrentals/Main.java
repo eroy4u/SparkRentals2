@@ -103,7 +103,8 @@ public class Main {
 
         // Configure Cassandra connection
         CqlClient cqlClient = new CqlClient();
-        cqlClient.connect(cqlHost, cqlKeyspace);
+        cqlClient.connect(cqlHost);
+        cqlClient.setCqlKeyspace(cqlKeyspace);
         
         // Configure the view directory
         Configuration viewConfig = new Configuration();
