@@ -5,6 +5,7 @@
  */
 package com.mycompany.sparkrentals;
 
+import com.mycompany.sparkrentals.forms.AddRentalForm;
 import com.mycompany.sparkrentals.forms.SearchRentalForm;
 import freemarker.template.Configuration;
 import java.util.ArrayList;
@@ -20,6 +21,18 @@ import org.apache.solr.common.SolrException;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 import static spark.Spark.staticFileLocation;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.get;
@@ -48,6 +61,8 @@ public class HelloWorld {
             Map<String, Object> attributes = new HashMap<>();
             
             attributes.put("data", new HashMap<>());
+            fillFormSelectionOption(attributes);
+
             return new ModelAndView(attributes, "add.ftl");
 
         }, freeMarkerEngine);
@@ -55,7 +70,17 @@ public class HelloWorld {
         post("/add", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
 
-            attributes.put("data", new HashMap<>());
+            AddRentalForm form = new AddRentalForm();
+            form.setDataMap(request.queryMap());
+            if (form.validate()){
+                
+            }
+            // form contains errors
+            
+            attributes.put("errorMessages", form.getErrorMessages());
+            attributes.put("data", form.getDataToDisplay());
+            fillFormSelectionOption(attributes);
+
             return new ModelAndView(attributes, "add.ftl");
 
         }, freeMarkerEngine);

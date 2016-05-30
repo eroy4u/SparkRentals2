@@ -1,6 +1,6 @@
   <form method="GET" action="/">
     
-    <#include 'search_form_upper_rows.ftl'>
+    <#include 'rental_form_upper_rows.ftl'>
     
     <div class="row">
       <div class="col-sm-4">

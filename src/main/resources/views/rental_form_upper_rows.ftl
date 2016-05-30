@@ -1,4 +1,4 @@
-<div class="row">
+    <div class="row">
       <div class="col-sm-4">
         <label>City</label>
         <select name="city" class="form-control">

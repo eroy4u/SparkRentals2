@@ -53,26 +53,34 @@ public abstract class BaseForm {
         dataToDisplay.put(field, value);
     }
 
-    protected void validateFloat(String field, String value) {
+    protected void validateNonNegativeFloat(String field, String value) {
         if (value == null || value.isEmpty()) {
             return;
         }
         try {
-            Float.parseFloat(value);
-            cleanedData.put(field, value);
+            float parsedFloat = Float.parseFloat(value);
+            if (parsedFloat < 0){
+                errorMessages.add(field + " should be non-negative.");
+            }else{
+                cleanedData.put(field, value);
+            }
         } catch (NumberFormatException e) {
             errorMessages.add(field + " doesn't cotain a valid number.");
         }
         dataToDisplay.put(field, value);
     }
 
-    protected void validateInt(String field, String value) {
+    protected void validateNonNegativeInt(String field, String value) {
         if (value == null || value.isEmpty()) {
             return;
         }
         try {
-            Integer.parseInt(value);
-            cleanedData.put(field, value);
+            int parsedInteger = Integer.parseInt(value);
+            if (parsedInteger < 0){
+                errorMessages.add(field + " should be non-negative.");
+            }else{
+                cleanedData.put(field, value);
+            }
         } catch (NumberFormatException e) {
             errorMessages.add(field + " doesn't cotain a valid number.");
         }

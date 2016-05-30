@@ -5,10 +5,11 @@
   <h1>Spark Rentals</h1>
   <ul class="nav nav-pills">
     <li class="active"><a href="/">Search for rentals</a></li>
-    <li><a href="/">Add a rental</a></li>
+    <li><a href="/add">Add/Update a rental</a></li>
   </ul>
   <#-- search form -->
-  <#include "search_form.ftl">
+  <#include 'search_form.ftl'>
+
    
   <#-- search results table -->
   <#if rentalList?size gt 0>
@@ -51,7 +52,7 @@
       <p>There are some errors in your input</p>
       <ul>
         <#list errorMessages as msg>
-          ${msg}
+          <li>${msg}</li>
         </#list>
       </ul>
       
