@@ -201,11 +201,11 @@ public class Main {
                     attributes.put("rentalList", rentalList);
                     attributes.put("errorMessages", new ArrayList<>());
 
+                } catch (IOException e){
+                    attributes.put("errorMessages", Arrays.asList("Exception when connecting to Solr!"+e.getMessage()));
                 } catch (SolrException e) {
                     //there is an error for querying
                     attributes.put("errorMessages", Arrays.asList("Solr query error!"));
-                } catch (Exception e){
-                    attributes.put("errorMessages", Arrays.asList("Exception when connecting to Solr!"+e.getMessage()));
                 }
 
             } else {
